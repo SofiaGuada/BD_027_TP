@@ -33,7 +33,7 @@ Create Table Usuarios (
    NombreUsuario varchar (100) not null unique,
    Nombre varchar(50) not null,
    Apellido varchar (50) not null,
-   DNI varchar(20) not null,
+   DNI varchar(20) not null unique,
    Email varchar (100) not null unique check (Email LIKE '%@%.%'),
    Contraseña varchar(100) not null,
    Pais varchar(100) not null
