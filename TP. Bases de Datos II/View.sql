@@ -1,20 +1,5 @@
 Use BD_TPI_27
-
--- USUARIOS CON SUSCRIPCION ACTIVAS Y FECHAS VENCIMIENTOS
-
-CREATE VIEW VW_SuscripcionDelUsuario AS 
-SELECT 
-  U.IdUsuario AS 'IdUsuario',
-  U.NombreUsuario,
-  U.Apellido,
-  U.Nombre,
-  U.Email,
-  US.FechaVencimiento
-FROM Usuarios U 
-INNER JOIN SuscripcionDelUsuario US ON US.IdUsuario = U.IdUsuario
-WHERE US.Activo = 1;
-
-SELECT *FROM VW_SuscripcionDelUsuario
+-- lo que el Usuario necesita ver
 
 -- CONTENIDO
 
@@ -36,7 +21,6 @@ SELECT *FROM VW_Contenido
 
 -- comentario de contenido de los usuarios de forma desc para que aparescan los mas nuevos
 
-
 CREATE VIEW VW_ComentariosContenido AS
 SELECT
     C.Titulo,
@@ -47,7 +31,8 @@ FROM Comentario CO
 INNER JOIN Usuarios U ON CO.IdUsuario = U.IdUsuario
 INNER JOIN Contenido C ON CO.IdContenido = C.IdContenido
 
-SELECT *FROM VW_ComentariosContenido
+SELECT * FROM VW_ComentariosContenido
+ORDER BY Fecha DESC;
 
 
 -- Actores y contenido
@@ -63,23 +48,8 @@ INNER JOIN Contenido C ON CA.IdContenido = C.IdContenido
 
 SELECT *FROM VW_ActoresContenido
 
-
--- playlist de usuario
-CREATE VIEW VW_PlaylistsUsuarios
-AS
-SELECT
-    U.NombreUsuario,
-    P.Nombre AS Playlist,
-    C.Titulo
-FROM PlaylistContenido PC
-INNER JOIN Playlist P ON PC.IdPlaylist = P.IdPlaylist
-INNER JOIN Usuarios U ON P.IdUsuario = U.IdUsuario
-INNER JOIN Contenido C ON PC.IdContenido = C.IdContenido
-
-SELECT *FROM VW_PlaylistsUsuarios
-
-
 --HISTORIAL DE VISUALIZACION
+  
 CREATE VIEW VW_HistorialVisualizacion
 AS
 SELECT
@@ -92,27 +62,7 @@ INNER JOIN Contenido C ON V.IdContenido = C.IdContenido
 
 SELECT *FROM VW_HistorialVisualizacion order by Fecha DESC
 
-Create View VW_ContenidoTemporadaEpisodio As
-Select
-    c.IdContenido,
-    c.Titulo As Contenido,
-    t.IdTemporada,
-    t.NumeroTemporada,
-    t.Titulo As TituloTemporada,
-    e.IdEpisodio,
-    e.NumeroEpisodio,
-    e.Titulo As TituloEpisodio,
-    e.Descripcion,
-    e.Duracion,
-    e.FechaLanzamiento
-From Contenido c
-Inner Join Temporada t On c.IdContenido = t.IdContenido
-Inner Join Episodio e On t.IdTemporada = e.IdTemporada;
-
-SELECT * FROM VW_ContenidoTemporadaEpisodio
-
-
-Create View VistaContenidoProductora As
+Create View VW_ContenidoProductora As
 Select 
     C.IdContenido,
     C.Titulo,
