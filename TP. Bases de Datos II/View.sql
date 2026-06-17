@@ -91,5 +91,17 @@ INNER JOIN Contenido C ON V.IdContenido = C.IdContenido
 
 SELECT *FROM VW_HistorialVisualizacion order by Fecha DESC
 
+-- Playlist del usuario (que contenido contiene su playlist)
+  
+CREATE VIEW VW_PlaylistsUsuarios
+AS
+SELECT
+    U.NombreUsuario,
+    P.Nombre AS Playlist,
+    C.Titulo
+FROM PlaylistContenido PC
+INNER JOIN Playlist P ON PC.IdPlaylist = P.IdPlaylist
+INNER JOIN Usuarios U ON P.IdUsuario = U.IdUsuario
+INNER JOIN Contenido C ON PC.IdContenido = C.IdContenido
 
 
