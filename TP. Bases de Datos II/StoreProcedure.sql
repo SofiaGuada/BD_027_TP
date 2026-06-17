@@ -81,6 +81,28 @@ BEGIN
     );
 END;
 
+-- Creacion de Playlist
+
+CREATE PROCEDURE SP_CrearPlaylist
+    @IdUsuario BIGINT,
+    @Nombre VARCHAR(100)
+AS
+BEGIN
+    IF EXISTS(
+        SELECT 1
+        FROM Playlist
+        WHERE IdUsuario = @IdUsuario
+          AND Nombre = @Nombre
+    )
+    BEGIN
+        RAISERROR('La playlist ya existe para este usuario.',16,1);
+        RETURN;
+    END
+    INSERT INTO Playlist(IdUsuario, Nombre)
+    VALUES(@IdUsuario, @Nombre);
+    PRINT 'Playlist creada correctamente';
+END;
+
 
 
 /* =========================================================
@@ -95,3 +117,7 @@ EXEC SP_AgregarFavorito 1, 5;
 
 -- Agregar Suscripcion del usuario 10
 EXEC SP_ContratarSuscripcion 10,2
+   
+-- Playlist del usuario 10
+EXEC SP_CrearPlaylist 10, 'Mis Favoritas';
+
