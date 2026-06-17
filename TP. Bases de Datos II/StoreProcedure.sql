@@ -61,13 +61,10 @@ CREATE PROCEDURE SP_ContratarSuscripcion
     @IdSuscripcion BIGINT
 AS
 BEGIN
-
     DECLARE @Plazo INT;
-
     SELECT @Plazo = Plazo
     FROM Suscripcion
     WHERE IdSuscripcion = @IdSuscripcion;
-
     INSERT INTO SuscripcionDelUsuario
     (
         IdUsuario,
@@ -82,7 +79,6 @@ BEGIN
         GETDATE(),
         DATEADD(DAY, @Plazo, GETDATE())
     );
-
 END;
 
 
