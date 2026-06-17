@@ -103,6 +103,15 @@ BEGIN
     PRINT 'Playlist creada correctamente';
 END;
 
+--- Registrar visualizacion
+Create Procedure SP_RegistrarVisualizacion
+    @IdUsuario bigint,
+    @IdContenido bigint
+As
+Begin
+    Insert Into Visualizacion(IdUsuario, IdContenido)
+    Values(@IdUsuario, @IdContenido)
+End,
 
 
 /* =========================================================
@@ -120,4 +129,8 @@ EXEC SP_ContratarSuscripcion 10,2
    
 -- Playlist del usuario 10
 EXEC SP_CrearPlaylist 10, 'Mis Favoritas';
+
+-- Agregar la visualizacion del usuario 10
+Exec SP_RegistrarVisualizacion 10, 9
+
 
