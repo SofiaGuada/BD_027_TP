@@ -54,6 +54,38 @@ BEGIN
 END
 GO
 
+-- registrar suscripcion
+GO
+CREATE PROCEDURE SP_ContratarSuscripcion
+    @IdUsuario BIGINT,
+    @IdSuscripcion BIGINT
+AS
+BEGIN
+
+    DECLARE @Plazo INT;
+
+    SELECT @Plazo = Plazo
+    FROM Suscripcion
+    WHERE IdSuscripcion = @IdSuscripcion;
+
+    INSERT INTO SuscripcionDelUsuario
+    (
+        IdUsuario,
+        IdSuscripcion,
+        FechaInicio,
+        FechaVencimiento
+    )
+    VALUES
+    (
+        @IdUsuario,
+        @IdSuscripcion,
+        GETDATE(),
+        DATEADD(DAY, @Plazo, GETDATE())
+    );
+
+END;
+
+
 
 /* =========================================================
    EJEMPLOS DE EJECUCIÓN (PARA PRUEBA)
@@ -64,3 +96,6 @@ EXEC SP_ContenidoPorPaisProductora 'Estados Unidos';
 
 -- Agregar favorito
 EXEC SP_AgregarFavorito 1, 5;
+
+-- Agregar Suscripcion del usuario 10
+EXEC SP_ContratarSuscripcion 10,2
