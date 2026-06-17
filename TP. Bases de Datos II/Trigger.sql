@@ -21,3 +21,22 @@ BEGIN
    END CATCH
 END 
 
+USE BD_TPI_27
+GO
+
+CREATE TRIGGER TR_Favoritos_ValidarContenido
+ON Favoritos
+AFTER INSERT
+AS
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM inserted i
+        INNER JOIN Contenido C ON C.IdContenido = i.IdContenido
+        WHERE C.Activo = 0
+    )
+    BEGIN
+        ROLLBACK TRANSACTION;
+    END
+END
+GO
