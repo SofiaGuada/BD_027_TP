@@ -34,22 +34,51 @@ INNER JOIN Contenido C ON CO.IdContenido = C.IdContenido
 SELECT * FROM VW_ComentariosContenido
 ORDER BY Fecha DESC;
 
+-- ADMINISTRADOR
+-- SUSCRIPCIONES ACTIVAS 
 
--- Actores y contenido
+CREATE VIEW VW_UsuariosActivos AS 
+SELECT 
+  U.IdUsuario AS 'IdUsuario',
+  U.NombreUsuario,
+  U.Apellido,
+  U.Nombre,
+  U.Email,
+  US.FechaVencimiento
+FROM Usuarios U 
+INNER JOIN SuscripcionDelUsuario US ON US.IdUsuario = U.IdUsuario
+WHERE US.Activo = 1;
 
-CREATE VIEW VW_ActoresContenido
-AS
+-- contenido mas visto
+
+CREATE VIEW VW_ContenidosMasVistos AS
 SELECT
-    A.Nombre + ' ' + A.Apellido AS 'Actor',
-    C.Titulo
-FROM ContenidoActor CA
-INNER JOIN Actores A ON CA.IdActor = A.IdActor
-INNER JOIN Contenido C ON CA.IdContenido = C.IdContenido
+    C.Titulo,
+    COUNT(V.IdContenido) AS CantidadVisualizaciones
+FROM Visualizacion V
+INNER JOIN Contenido C ON V.IdContenido = C.IdContenido
+GROUP BY C.Titulo;
 
-SELECT *FROM VW_ActoresContenido
+SELECT * FROM VW_ContenidosMasVistos
+
+-- Permite al usuario buscar la suscripcion 
+CREATE VIEW VW_MiSuscripcion AS
+SELECT
+    U.NombreUsuario,
+    S.Nombre AS Suscripcion,
+    S.Descripcion,
+    S.Precio,
+    SDU.FechaInicio,
+    SDU.FechaVencimiento,
+    CASE
+        WHEN SDU.Activo = 1 THEN 'Activa'
+        ELSE 'Vencida'
+    END AS Estado
+FROM SuscripcionDelUsuario SDU
+INNER JOIN Usuarios U ON SDU.IdUsuario = U.IdUsuario
+INNER JOIN Suscripcion S ON SDU.IdSuscripcion = S.IdSuscripcion;
 
 --HISTORIAL DE VISUALIZACION
-  
 CREATE VIEW VW_HistorialVisualizacion
 AS
 SELECT
@@ -62,13 +91,5 @@ INNER JOIN Contenido C ON V.IdContenido = C.IdContenido
 
 SELECT *FROM VW_HistorialVisualizacion order by Fecha DESC
 
-Create View VW_ContenidoProductora As
-Select 
-    C.IdContenido,
-    C.Titulo,
-    C.FechaLanzamiento,
-    P.Nombre As Productora
-From Contenido C
-Inner Join Productora P On C.IdProductora = P.IdProductora
 
-SELECT * FROM VistaContenidoProductora
+
