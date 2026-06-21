@@ -111,7 +111,7 @@ As
 Begin
     Insert Into Visualizacion(IdUsuario, IdContenido)
     Values(@IdUsuario, @IdContenido)
-End,
+End;
 
 
 /* =========================================================
