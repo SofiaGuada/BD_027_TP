@@ -92,6 +92,34 @@ Begin
     Values(@IdUsuario, @IdContenido)
 End;
 
+GO
+CREATE PROCEDURE SP_RegistrarNuevoUsuario
+    @NombreUsuario VARCHAR(100),
+    @Nombre VARCHAR(50),
+    @Apellido VARCHAR(100), 
+    @DNI VARCHAR(20),
+    @Email VARCHAR(100),
+    @Pais VARCHAR(50),
+    @Contraseña VARCHAR(100)
+AS
+BEGIN
+    BEGIN TRANSACTION;
+     -- Verificar si el usuario ya existe por DNI o Email
+    IF EXISTS (SELECT 1 FROM Usuarios WHERE dni = @DNI OR email = @Email)
+    BEGIN
+         -- Si existe
+        RAISERROR('Error: Ya existe un usuario registrado con ese DNI o Email.', 16, 1);
+    END  
+    --  Inserción en la tabla de Usuarios
+     INSERT INTO Usuarios (NombreUsuario, nombre, Apellido, dni, email, pais, Contraseña)
+    VALUES (@NombreUsuario, @Nombre, @Apellido, @DNI, @Email, @Pais, @Contraseña);
+    -- Si todo salió bien
+     COMMIT TRANSACTION;
+     PRINT 'Usuario registrado con éxito en el sistema.';  
+END;
+
+
+
 
 /* =========================================================
    EJEMPLOS DE EJECUCIÓN (PARA PRUEBA)
