@@ -40,3 +40,26 @@ BEGIN
     END
 END
 GO
+CREATE TRIGGER TR_ValidarTemporadaContenido ON Temporada
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    -- Evita interferencias con el conteo de filas afectadas
+    SET NOCOUNT ON;
+
+    -- Verifica si alguna de las filas insertadas o modificadas pertenece a una Película
+    IF EXISTS (
+        SELECT 1 
+        FROM inserted i
+        INNER JOIN Contenido c ON i.IdContenido = c.IdContenido
+        INNER JOIN TipoContenido tc ON c.IdTipoContenido = tc.IdTipoContenido
+        WHERE tc.nombre LIKE '%Películas%'
+    )
+    BEGIN
+        -- Si encuentra una coincidencia, cancela la transacción y muestra el error
+        RAISERROR('No está permitido asignar temporadas ni episodios a contenidos catalogados como Película.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END;
+GO
+
