@@ -61,6 +61,21 @@ CREATE PROCEDURE SP_ContratarSuscripcion
     @IdSuscripcion BIGINT
 AS
 BEGIN
+    BEGIN TRY
+ -- Verificar que el usuario ya exista 
+ BEGIN TRANSACTION
+   IF EXISTS(
+      SELECT 1
+      FROM SuscripcionDelUsuario
+      WHERE IdUsuario = @IdUsuario AND
+      Activo = 1 AND
+      FechaVencimiento >= CAST(getdate() AS date)
+   )
+   BEGIN
+     RAISERROR('ERROR: ESTE USUARIO YA TIENE UNA SUSCRIPCION ACTIVA',16,1)
+     ROLLBACK TRANSACTION;
+     RETURN
+     END
     DECLARE @Plazo INT;
     SELECT @Plazo = Plazo
     FROM Suscripcion
@@ -79,6 +94,13 @@ BEGIN
         GETDATE(),
         DATEADD(DAY, @Plazo, GETDATE())
     );
+   COMMIT TRANSACTION;
+   PRINT 'SUSCRIPCION CONTRATADA CORRECTAMENTE';
+   END TRY
+   BEGIN CATCH
+       ROLLBACK TRANSACTION;
+       PRINT ERROR_MESSAGE();
+   END CATCH;
 END;
 
 --- Registrar visualizacion
@@ -104,12 +126,15 @@ CREATE PROCEDURE SP_RegistrarNuevoUsuario
     @Contraseña VARCHAR(100)
 AS
 BEGIN
+   BEGIN TRY
     BEGIN TRANSACTION;
      -- Verificar si el usuario ya existe por DNI o Email
     IF EXISTS (SELECT 1 FROM Usuarios WHERE dni = @DNI OR email = @Email)
     BEGIN
          -- Si existe
         RAISERROR('Error: Ya existe un usuario registrado con ese DNI o Email.', 16, 1);
+        ROLLBACK TRANSACTION;
+      RETURN
     END  
     --  Inserción en la tabla de Usuarios
      INSERT INTO Usuarios (NombreUsuario, nombre, Apellido, dni, email, pais, Contraseña)
@@ -117,6 +142,11 @@ BEGIN
     -- Si todo salió bien
      COMMIT TRANSACTION;
      PRINT 'Usuario registrado con éxito en el sistema.';  
+ END TRY
+BEGIN CATCH
+    ROLLBACK TRANSACTION
+    PRINT ERROR_MESSAGE()
+END CATCH
 END;
 
 
