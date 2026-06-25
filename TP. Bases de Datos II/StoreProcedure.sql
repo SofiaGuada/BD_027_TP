@@ -55,7 +55,7 @@ END
 GO
 
 -- registrar suscripcion
-GO
+   
 CREATE PROCEDURE SP_ContratarSuscripcion
     @IdUsuario BIGINT,
     @IdSuscripcion BIGINT
@@ -82,7 +82,7 @@ BEGIN
 END;
 
 --- Registrar visualizacion
-
+GO
 Create Procedure SP_RegistrarVisualizacion
     @IdUsuario bigint,
     @IdContenido bigint
@@ -92,6 +92,7 @@ Begin
     Values(@IdUsuario, @IdContenido)
 End;
 
+-- Registrar usuario
 GO
 CREATE PROCEDURE SP_RegistrarNuevoUsuario
     @NombreUsuario VARCHAR(100),
