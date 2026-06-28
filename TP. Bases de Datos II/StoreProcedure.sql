@@ -115,8 +115,23 @@ Create Procedure SP_RegistrarVisualizacion
     @IdContenido bigint
 As
 Begin
-    Insert Into Visualizacion(IdUsuario, IdContenido)
-    Values(@IdUsuario, @IdContenido)
+ If not exists (
+        Select 1
+        From Visualizacion
+        Where IdUsuario = @IdUsuario
+          AND IdContenido = @IdContenido
+          AND Fecha = CAST(GETDATE() AS DATE)
+    )
+    Begin
+        Insert into Visualizacion(IdUsuario, IdContenido)
+        Values(@IdUsuario, @IdContenido);
+
+        Print 'Visualización registrada correctamente.';
+    End
+    Else
+    Begin
+        Print 'La visualización ya fue registrada para este usuario en el día de hoy.';
+    End
 End;
 
 -- Registrar usuario
