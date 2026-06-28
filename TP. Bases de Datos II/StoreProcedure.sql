@@ -50,6 +50,11 @@ BEGIN
     BEGIN
         INSERT INTO Favoritos (IdUsuario, IdContenido)
         VALUES (@IdUsuario, @IdContenido)
+     PRINT 'CONTENIDO AGREGADO A FAVORITOS';
+END
+    ELSE
+    BEGIN
+        PRINT 'EL CONTENIDO YA SE ENCUENTRA EN LA LISTA DE FAVORITOS';
     END
 END
 GO
